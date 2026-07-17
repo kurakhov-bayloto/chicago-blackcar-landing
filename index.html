@@ -432,11 +432,23 @@ function goToMainSite(){
     go(fromUrl);
     return;
   }
+  var done = false;
+  function finish(subid){
+    if (done) return;
+    done = true;
+    go(subid || '');
+  }
   if (window.KTracking && typeof window.KTracking.getSubId === 'function') {
-    window.KTracking.getSubId(function(subid){ go(subid || ''); });
+    try {
+      window.KTracking.getSubId(function(subid){ finish(subid); });
+    } catch (e) {
+      finish('');
+      return;
+    }
+    setTimeout(function(){ finish(''); }, 600);
     return;
   }
-  go('');
+  finish('');
 }
 
 const translations = {
